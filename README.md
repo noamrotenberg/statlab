@@ -1,4 +1,6 @@
+
 # statlab
+[![PyPi version](https://badgen.net/pypi/v/statlab)](https://pypi.org/project/statlab)
 
 
 statlab is a new Python package offering a variety of statistical and machine learning tools.
@@ -25,7 +27,7 @@ Install: ``!pip install statlab``
 
 Import a single module: ``import statlab.ord`` - imports only ord
 
-Import all modules: ``from statlab.all import *`` - can access any function without prefixes, e.g., TreeOrdinalClassifier(base_clf)
+Import all modules: ``from statlab.all import *`` - can access any function without prefixes, e.g., ``TreeOrdinalClassifier(base_clf)``
 
 Specific example:
 ```
@@ -40,4 +42,3 @@ clf = statlab.ord.TreeOrdinalClassifier(base_clf)
 + Dataset mislabeling detection and classification
 + Naive Bayes classifier using nonparametric statistics
 + Automated nonlinear feature tuning
-

@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "statlab"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
   { name="Noam Rotenberg", email="nrotenb1@alumni.jh.edu" },
   { name="Zan Chaudhry", email="zchaudh3@alumni.jh.edu" },

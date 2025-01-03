@@ -23,7 +23,7 @@ class BaseOrdinalClassifier(sklearn.base.BaseEstimator, sklearn.base.ClassifierM
                 raise ValueError(f"No training samples were given of class {class_i}")
 
     def fit(self, X, y, classes=None, sample_weight=None, classifier_fit_kwargs={},
-            best_split_threshold='best_clf'):
+            best_split_threshold='best_clf', print_=True):
         """ # copied in part from sklearn, enabling interoperability
         Fit original_classifier according to X, y in a thresholded ordinal
         regression paradigm.
@@ -97,7 +97,6 @@ class BaseOrdinalClassifier(sklearn.base.BaseEstimator, sklearn.base.ClassifierM
             self.best_split_ind = np.argmin([np.sum(y <= threshold)**2 + np.sum(y > threshold)**2 for threshold in self.thresholds])
         elif best_split_threshold == 'best_clf':
             self.best_split_ind = self.calculate_best_threshold_by_clf_performance()
-            print("best_clf ind:", self.best_split_ind)
         elif best_split_threshold == 'first_split':
             self.best_split_ind = 0
         elif best_split_threshold == 'last_split':
@@ -108,7 +107,7 @@ class BaseOrdinalClassifier(sklearn.base.BaseEstimator, sklearn.base.ClassifierM
             if (best_split_threshold < self.classes_[0]) or (best_split_threshold > self.classes_[-1]):
                 raise ValueError("best_split_threshold must be between the smallest and largest classes.")
             self.best_split_ind = np.argmin( np.abs(self.thresholds - best_split_threshold) )
-        print("Chosen best_split_ind:", self.best_split_ind)
+        if print_: print("Chosen best_split_ind:", self.best_split_ind)
         # Return the classifier
         return self
 
@@ -125,7 +124,6 @@ class BaseOrdinalClassifier(sklearn.base.BaseEstimator, sklearn.base.ClassifierM
             for j, threshold_j in enumerate(self.thresholds):
                 clf_j = copy.deepcopy(self.original_classifier).fit(X_train, y_train > threshold_j, sample_weight=self.sample_weight_, **self.classifier_fit_kwargs_)
                 val_classifier_performances[j] += sklearn.metrics.f1_score(y_val > threshold_j, clf_j.predict(X_val), sample_weight=self.sample_weight_)
-            print(f"updated val_classifier_performances (fold {i}):", val_classifier_performances)
         return np.argmax(val_classifier_performances) # equivalent to argmax of average
 
     def predict(self, X, use_predict_proba):
@@ -277,7 +275,7 @@ def find_best_F1(y_true, y_score, print_=False):
   f1_scores = 2*precisions*recalls/(precisions+recalls)
   best_F1 = np.nanmax(f1_scores)
   best_F1_threshold = thresholds[np.nanargmax(f1_scores)]
-  if print:
+  if print_:
     print(f"Best F1 score: {best_F1}; threshold: {best_F1_threshold}")
     print_classification_report(y_true, y_score>=best_F1_threshold)
   else: return best_F1, best_F1_threshold

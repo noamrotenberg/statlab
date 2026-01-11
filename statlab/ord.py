@@ -248,24 +248,6 @@ Negative predictive value: {stats['False']['precision']}""")
   else: print(f"Accuracy (weighted by 0/1 class): {0.5*np.average(true[true==1]==prediction[true==1]) + 0.5*np.average(true[true==0]==prediction[true==0])}\n")
 
 
-def regression_accuracy(true, min_class, max_class, print_=True, allowable_error=0):
-  # allowable_error can be a list of errors to check [only useful when print_=True]
-  # currently assumes that adjacent classes are 1 apart
-  true = copy.deepcopy(true)
-  predictions = copy.deepcopy(predictions)
-
-  predictions[predictions < min_class] = min_class
-  predictions[predictions > max_class] = max_class
-
-  try:
-    for i in allowable_error:
-      regression_accuracy(true, predictions, i, mrs90=False)
-  except:
-    # accuracy plus or minus within 'error' number of mRS-90
-    sub = np.abs(true - np.round(predictions))
-    accuracy = np.mean(sub <= allowable_error)
-    if print_: print(f"regression accuracy (+/-{allowable_error}):", accuracy)
-    return accuracy
 
 def find_best_F1(y_true, y_score, print_=False):
   # note: applies nanmax to the scores

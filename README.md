@@ -2,10 +2,7 @@
 # statlab
 [![PyPi version](https://badgen.net/pypi/v/statlab)](https://pypi.org/project/statlab)
 
-
 statlab is a new Python package offering a variety of statistical and machine learning tools.
-
-This package is being developed by Noam Rotenberg and Zan Chaudhry.
 
 
 # Products
@@ -20,6 +17,14 @@ Submodule developed by: Noam Rotenberg, Andreia Faria, Brian Caffo
 
 Examples coming soon!
 
+## "aled" Adaptive Label Error Detection
+Submodule contains: ALED class
+
+Methods details and cite: (details available soon)
+
+Submodule developed by: Zan Chaudhry, Noam Rotenberg, Brian Caffo, Craig Jones, Haris Sair
+
+Example available in examples/aled-medMNIST.py
 
 # Usage
 

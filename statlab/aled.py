@@ -10,13 +10,13 @@ from collections import OrderedDict
 import torch.nn as nn
 
 
-class ALED(BaseEstimator, ClassifierMixin):
+class ALEDDetector(BaseEstimator, ClassifierMixin):
     """
     A method for Adaptive Label Error Detection, identifying mislabeling in 
     the reference labels used to train deep neural networks. Manuscript with
     further details will be available shortly. You may need to overwrite 
-    ALED.extract_features() or manually assign ALED.feats if your model is in 
-    a different format.
+    ALEDDetector.extract_features() or manually assign ALEDDetector.feats if
+    your model is in a different format.
     """
 
     def __init__(self, random_state=0):
@@ -27,8 +27,9 @@ class ALED(BaseEstimator, ClassifierMixin):
     def fit_predict(self, model, dataset, device=None, num_ensembles=10, num_components=2, likelihood_ratio_threshold=2, batch_size=100, support_fraction=None):
         """ # format is copied in part from sklearn, enabling interoperability
         
-        Perform the Adaptive Label Error Detection (ALED) algorithm to model
-        input classes and predict which samples are mislabeled.
+        Perform mislabeling detection, according to the Adaptive Label Error
+        Detection (ALED) algorithm. Model input classes and predict which
+        samples are mislabeled.
 
         Parameters
         ----------
@@ -62,8 +63,8 @@ class ALED(BaseEstimator, ClassifierMixin):
         
         batch_size : int
             Batch size to use when extracting initial features (i.e., running 
-            `dataset` through `model`). Used be ALED.extract_featurs(). Must 
-            be > 0.
+            `dataset` through `model`). Used be ALEDDetector.extract_featurs().
+            Must be > 0.
         
         support_fraction : float or None
             Input parameter to sklearn.covariance.MinCovDet. "The proportion 
@@ -82,8 +83,8 @@ class ALED(BaseEstimator, ClassifierMixin):
                 - mislabeling probability
                 - ALED-predicted label
                 - ALED-predicted mislabeling (boolean)
-            Note that this function (ALED.fit_predict()) changes self and 
-            additional metadata is stored in the object.
+            Note that this function (ALEDDetector.fit_predict()) changes self
+            and additional metadata is stored in the object.
         """
         
         self.check_params(num_ensembles, num_components,

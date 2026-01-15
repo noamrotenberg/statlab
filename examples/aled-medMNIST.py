@@ -9,6 +9,7 @@ The entire ALED algorithm is described in detail here: (link will be inserted
 once available).
 This example is based on code deposited in Zenodo (link will be inserted here
 once available), which was used to generate the results for the above paper.
+Also see the Zenodo for the intended Python environment.
 """
 
 import statlab.aled
@@ -46,7 +47,7 @@ RUN_PARAMS = {
     "weights": "DEFAULT", # "DEFAULT" for pretrained model, or None for untrained model
     "num_epochs": 16, # 16 suggested for pretrained model; 32 suggested for untrained model
     "mislabeled_percentage": 0.05, # percentage of samples to be artificially mislabeled for demonstration purposes
-    "num_trials": 1, # how many times to repeat the ALED experiment; set to >1 if you want multiple trials
+    "num_trials": 1, # how many times to repeat the ALED detection experiment; set to >1 if you want multiple trials
     "device": torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
     "ALED_hyperparams": {
         "num_ensembles": 10,
@@ -438,10 +439,10 @@ def full_looper(traindata, valdata, model, ALED_hyperparams):
   print("Done Training")
   auc1, auc2 = CL_Looper(new_model, mislabeled_data=traindata, num_epochs=epochs, batch_size=batch_size, retrain=False, device=device)
 
-  aled = statlab.aled.ALED()
+  aled_detector = statlab.aled.ALEDDetector()
   print("Starting ALED")
   print("\n**classification report**")
-  prob_df = aled.fit_predict(model=new_model, dataset=traindata, **ALED_hyperparams)
+  prob_df = aled_detector.fit_predict(model=new_model, dataset=traindata, **ALED_hyperparams)
   auc3 = print_classification_report(traindata.mislabel_bool_array, prob_df["Mislabel"].to_numpy(), weights=None, confidence=prob_df["mislabel_prob"].to_numpy())
   
   return auc1, auc2, auc3
@@ -508,37 +509,38 @@ def compute_embeddings(model, loader):
 
 
 ## Run and Compare:
-print("**Running with the following hyperparameters:**", RUN_PARAMS, sep='\n')
-SEED = 123
-np.random.seed(SEED)
-torch.manual_seed(SEED)
-
-performance_dict = {}
-mislabeled_percentage = RUN_PARAMS["mislabeled_percentage"]
-num_trials = RUN_PARAMS["num_trials"]
-
-for dataset in [PneumoniaMNIST, BreastMNIST, DermaMNIST, RetinaMNIST, BloodMNIST]:
-    trainset = dataset(split="train", download=True, size=224, transform = data_T)
-    valset = dataset(split="val", download=True, size=224, transform = data_T)
-    if dataset == DermaMNIST:
-        trainset = BinaryDermaMNIST(trainset)
-        valset = BinaryDermaMNIST(valset)
-    if dataset == RetinaMNIST:
-        trainset = BinaryRetinaMNIST(trainset)
-        valset = BinaryRetinaMNIST(valset)
-    if dataset == BloodMNIST:
-        trainset = BinaryBloodMNIST(trainset)
-        valset = BinaryBloodMNIST(valset)
-
-    CL_perf_list = []
-    CL_feat_perf_list = []
-    ALED_perf_list = []
-    for trial in range(num_trials):
-        traindata = Mislabeling_Dataset(trainset, internal_dataset_labels=trainset.labels.squeeze(), fraction_mislabeled=mislabeled_percentage)
-        valdata = Mislabeling_Dataset(valset, internal_dataset_labels=valset.labels.squeeze(), fraction_mislabeled=mislabeled_percentage)
-        model = RUN_PARAMS["model"]
-        CL_stats, CL_feat_stats, ALED_stats = full_looper(traindata, valdata, model, RUN_PARAMS["ALED_hyperparams"])
-        CL_perf_list.append(CL_stats)
-        CL_feat_perf_list.append(CL_feat_stats)
-        ALED_perf_list.append(ALED_stats)
-    performance_dict[dataset] = {"CL" : CL_perf_list, "CL_feat" : CL_feat_perf_list, "ALED" : ALED_perf_list}
+if __name__ == "__main__":
+    print("**Running with the following hyperparameters:**", RUN_PARAMS, sep='\n')
+    SEED = 123
+    np.random.seed(SEED)
+    torch.manual_seed(SEED)
+    
+    performance_dict = {}
+    mislabeled_percentage = RUN_PARAMS["mislabeled_percentage"]
+    num_trials = RUN_PARAMS["num_trials"]
+    
+    for dataset in [PneumoniaMNIST, BreastMNIST, DermaMNIST, RetinaMNIST, BloodMNIST]:
+        trainset = dataset(split="train", download=True, size=224, transform = data_T)
+        valset = dataset(split="val", download=True, size=224, transform = data_T)
+        if dataset == DermaMNIST:
+            trainset = BinaryDermaMNIST(trainset)
+            valset = BinaryDermaMNIST(valset)
+        if dataset == RetinaMNIST:
+            trainset = BinaryRetinaMNIST(trainset)
+            valset = BinaryRetinaMNIST(valset)
+        if dataset == BloodMNIST:
+            trainset = BinaryBloodMNIST(trainset)
+            valset = BinaryBloodMNIST(valset)
+    
+        CL_perf_list = []
+        CL_feat_perf_list = []
+        ALED_perf_list = []
+        for trial in range(num_trials):
+            traindata = Mislabeling_Dataset(trainset, internal_dataset_labels=trainset.labels.squeeze(), fraction_mislabeled=mislabeled_percentage)
+            valdata = Mislabeling_Dataset(valset, internal_dataset_labels=valset.labels.squeeze(), fraction_mislabeled=mislabeled_percentage)
+            model = RUN_PARAMS["model"]
+            CL_stats, CL_feat_stats, ALED_stats = full_looper(traindata, valdata, model, RUN_PARAMS["ALED_hyperparams"])
+            CL_perf_list.append(CL_stats)
+            CL_feat_perf_list.append(CL_feat_stats)
+            ALED_perf_list.append(ALED_stats)
+        performance_dict[dataset] = {"CL" : CL_perf_list, "CL_feat" : CL_feat_perf_list, "ALED" : ALED_perf_list}

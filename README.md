@@ -10,17 +10,19 @@ statlab is a new Python package offering a variety of statistical and machine le
 ## "ord" ordinal classification tools
 Submodule contains:
 + TreeOrdinalClassifier
-+ SubtractionOrdinalClassifier
++ DifferenceOrdinalClassifier
 + Functions to calculate classification metrics on ordinal data
+
+Methods details and cite: Rotenberg, N. H., Faria, A. V., & Caffo, B. (2026). Classifier Pooling for Modern Ordinal Classification. arXiv preprint [arXiv:2603.17278](https://arxiv.org/pdf/2603.17278).
 
 Submodule developed by: Noam Rotenberg, Andreia Faria, Brian Caffo
 
-Examples coming soon!
+Example available in examples/ord.ipynb
 
 ## "aled" Adaptive Label Error Detection
-Submodule contains: ALED class
+Submodule contains: ALEDDetector class
 
-Methods details and cite: (details available soon)
+Methods details and cite: Chaudhry, Z., Rotenberg, N. H., Caffo, B., Jones, C. K., & Sair, H. I. (2026). Adaptive Label Error Detection: A Bayesian Approach to Mislabeled Data Detection. arXiv preprint [arXiv:2601.10084](https://arxiv.org/pdf/2601.10084).
 
 Submodule developed by: Zan Chaudhry, Noam Rotenberg, Brian Caffo, Craig Jones, Haris Sair
 
@@ -44,6 +46,5 @@ clf = statlab.ord.TreeOrdinalClassifier(base_clf)
 
 # Future work:
 
-+ Dataset mislabeling detection and classification
 + Naive Bayes classifier using nonparametric statistics
 + Automated nonlinear feature tuning

@@ -188,7 +188,7 @@ class TreeOrdinalClassifier(BaseOrdinalClassifier):
         return leaf_probabilities
 
 
-class SubtractionOrdinalClassifier(BaseOrdinalClassifier):
+class DifferenceOrdinalClassifier(BaseOrdinalClassifier):
     def __init__(self, classifier):
         super().__init__(classifier)
 
@@ -226,6 +226,7 @@ class SubtractionOrdinalClassifier(BaseOrdinalClassifier):
         return probabilities
 
 
+SubtractionOrdinalClassifier = DifferenceOrdinalClassifier
 
 ## Related helper functions:
 
